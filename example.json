@@ -1,0 +1,36 @@
+//import: XXX456
+//import: XXX123
+
+//class: First, super: SuperFirst
+{
+  //alias: aaa, nullable: false
+  "a": 1.2,
+  "b": false,
+  //alias: ccc, nullable: false, class: SubC
+  "c": {
+    "d": 2,
+    "e": "eee"
+  },
+  //alias: fff, nullable: false, class: SubF
+  "f": [
+    {
+      "g": 22,
+      "h": 33
+    }
+  ],
+  "j": [
+    "1"
+  ]
+}
+
+//class: Second, super: SuperSecond
+{
+  //alias: username, nullable: false
+  "user_name": "",
+  "password": "",
+  //alias: ccc, nullable: false, class: SubC
+  "duplicateModel": {
+    "d": 2,
+    "e": "eee"
+  }
+}
