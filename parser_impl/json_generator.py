@@ -5,6 +5,16 @@ from model import Node, RootNode, MutiNode, ValueType, DataLeafNode, DataObjectN
 from parser_impl.json_template import jsonTemplate
 
 
+_clsNumber = 0
+
+
+# 若部分node无name无cls, 可创建一个cls
+def geneClassName() -> str:
+    global _clsNumber
+    _clsNumber += 1
+    return "SubItem" + str(_clsNumber)
+
+
 # 是否是基础类型
 def isBasicType(node: Node) -> bool:
     return node.type == ValueType.Double or \
@@ -51,24 +61,24 @@ def nodeToClass(node: Node) -> str:
 
     if isinstance(node, DataObjectNode):
         if node.type == ValueType.Object:
-            name = nodeName(node)
-            cls = node.cls if node.cls != '' else name[0].upper() + name[1:]
+            if node.cls != '':
+                cls = node.cls
+            elif node.name != '':
+                name = nodeName(node)
+                cls = name[0].upper() + name[1:]
+            else:
+                node.cls = geneClassName()
+                cls = node.cls
             return cls
 
         # 获取数组中的元素类型
         if node.type == ValueType.Array:
-            if node.cls != '':
-                return node.cls
-
             if len(node.children) == 0:
-                return "dynamic"
+                cls = "dynamic"
+            else:
+                cls = nodeToClass(node.children[0])
 
-            if isBasicType(node.children[0]):
-                return nodeToClass(node.children[0])
-
-            name = nodeName(node)
-            cls = name[0].upper() + name[1:] + "Item"
-            return cls
+            return "List<{}>".format(cls)
 
     raise AttributeError("node to class failed, at line: " + node.source)
 
@@ -81,8 +91,6 @@ def nodeToClsArg(node: Node) -> str:
     if isinstance(node, DataObjectNode):
         name = nodeName(node)
         cls = nodeToClass(node)
-        if node.type == ValueType.Array:
-            cls = "List<{}>".format(cls)
         return cls + " " + name + ";"
 
     raise AttributeError("node to class arguments failed, at line: " + node.source)
@@ -107,7 +115,7 @@ def nodeToFromJson(node: Node) -> str:
             return text
 
         if node.type == ValueType.Array:
-            text = "List<{}>.from({}.map((e) => e))".format(nodeToClass(node), json)
+            text = "{}.from({}.map((e) => e))".format(nodeToClass(node), json)
             if node.nullable:
                 text = "{} != null ? {} : null".format(json, text)
             text = "{}: {},".format(nodeName(node), text)
@@ -144,6 +152,7 @@ import 'dart:convert';
 """
 
 space = "    "
+
 
 class JsonGenerator(IGenerator):
     _lineFeed = ''
@@ -195,19 +204,37 @@ class JsonGenerator(IGenerator):
             fromJson += "{}{}{}{}".format(space, space, nodeToFromJson(child), self._lineFeed)
             toJson += "{}{}{}{}".format(space, space, nodeToToJson(child), self._lineFeed)
 
-            if isinstance(child, DataObjectNode):
-                if child.type == ValueType.Array:
-                    if len(child.children) == 0:
-                        child.cls = "dynamic"
-                    elif isBasicType(child.children[0]):
-                        child.cls = nodeToClass(child.children[0])
-                    else:
-                        n = child.children[0]
-                        if isinstance(n, DataObjectNode):
-                            n.cls = nodeToClass(child)
-                            subNodes.append(n)
-                elif child.type == ValueType.Object:
-                    subNodes.append(child)
+            tmpNode = child
+            while True:
+                if not isinstance(tmpNode, DataObjectNode):
+                    break
+
+                if len(tmpNode.children) == 0:
+                    break
+
+                if tmpNode.type == ValueType.Object:
+                    subNodes.append(tmpNode)
+                    break
+
+                if tmpNode.type == ValueType.Array:
+                    tmpNode = tmpNode.children[0]
+                    continue
+
+                break
+            #
+            # if isinstance(child, DataObjectNode):
+            #     if child.type == ValueType.Array:
+            #         if len(child.children) == 0:
+            #             child.cls = "dynamic"
+            #         elif isBasicType(child.children[0]):
+            #             child.cls = nodeToClass(child.children[0])
+            #         else:
+            #             n = child.children[0]
+            #             if isinstance(n, DataObjectNode):
+            #                 n.cls = nodeToClass(child)
+            #                 subNodes.append(n)
+            #     elif child.type == ValueType.Object:
+            #         subNodes.append(child)
 
         result = jsonTemplate.format(cls, clsArgs.rstrip(),
                                      clsConstructionArgs.rstrip(), fromJson.rstrip(),

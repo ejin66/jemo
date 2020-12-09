@@ -3,7 +3,7 @@
 
 # example
 有如下类json配置文件`example.json`
-```json
+```text
 //import: XXX456
 //import: XXX123
 
@@ -14,10 +14,14 @@
   "b": false,
   //alias: ccc, nullable: false, class: SubC
   "c": {
+    "i": {
+      "k": "123",
+      "n": "111"
+    },
     "d": 2,
     "e": "eee"
   },
-  //alias: fff, nullable: false, class: SubF
+  //alias: fff, nullable: false
   "f": [
     {
       "g": 22,
@@ -25,7 +29,16 @@
     }
   ],
   "j": [
-    "1"
+    [
+      "1"
+    ]
+  ],
+  "x": [
+    //class: YZ
+    {
+      "y": 1,
+      "z": false
+    }
   ]
 }
 
@@ -60,8 +73,9 @@ class First extends SuperFirst {
     double aaa;
     bool b;
     SubC ccc;
-    List<SubF> fff;
-    List<String> j;
+    List<SubItem1> fff;
+    List<List<String>> j;
+    List<SubItem2> x;
 
     First({
         this.aaa,
@@ -69,6 +83,7 @@ class First extends SuperFirst {
         this.ccc,
         this.fff,
         this.j,
+        this.x,
     });
 
     factory First.fromRawJson(String str) => First.fromJson(json.decode(str));
@@ -79,8 +94,9 @@ class First extends SuperFirst {
         aaa: json['a'],
         b: json['b'],
         ccc: SubC.fromJson(json['c']),
-        fff: List<SubF>.from(json['f'].map((e) => e)),
-        j: List<String>.from(json['j'].map((e) => e)),
+        fff: List<SubItem1>.from(json['f'].map((e) => e)),
+        j: List<List<String>>.from(json['j'].map((e) => e)),
+        x: List<SubItem2>.from(json['x'].map((e) => e)),
     );
 
     Map<String, dynamic> toJson() => {
@@ -89,14 +105,17 @@ class First extends SuperFirst {
         "c": ccc.toJson(),
         "f": List<dynamic>.from(fff.map((e) => e)),
         "j": List<dynamic>.from(j.map((e) => e)),
+        "x": List<dynamic>.from(x.map((e) => e)),
     };
 }
 
 class SubC {
+    I i;
     int d;
     String e;
 
     SubC({
+        this.i,
         this.d,
         this.e,
     });
@@ -106,30 +125,56 @@ class SubC {
     String toRawJson() => json.encode(toJson());
 
     factory SubC.fromJson(Map<String, dynamic> json) => SubC(
+        i: I.fromJson(json['i']),
         d: json['d'],
         e: json['e'],
     );
 
     Map<String, dynamic> toJson() => {
+        "i": i.toJson(),
         "d": d,
         "e": e,
     };
 }
 
-class SubF {
+class I {
+    String k;
+    String n;
+
+    I({
+        this.k,
+        this.n,
+    });
+
+    factory I.fromRawJson(String str) => I.fromJson(json.decode(str));
+
+    String toRawJson() => json.encode(toJson());
+
+    factory I.fromJson(Map<String, dynamic> json) => I(
+        k: json['k'],
+        n: json['n'],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "k": k,
+        "n": n,
+    };
+}
+
+class SubItem1 {
     int g;
     int h;
 
-    SubF({
+    SubItem1({
         this.g,
         this.h,
     });
 
-    factory SubF.fromRawJson(String str) => SubF.fromJson(json.decode(str));
+    factory SubItem1.fromRawJson(String str) => SubItem1.fromJson(json.decode(str));
 
     String toRawJson() => json.encode(toJson());
 
-    factory SubF.fromJson(Map<String, dynamic> json) => SubF(
+    factory SubItem1.fromJson(Map<String, dynamic> json) => SubItem1(
         g: json['g'],
         h: json['h'],
     );
@@ -137,6 +182,30 @@ class SubF {
     Map<String, dynamic> toJson() => {
         "g": g,
         "h": h,
+    };
+}
+
+class SubItem2 {
+    int y;
+    bool z;
+
+    SubItem2({
+        this.y,
+        this.z,
+    });
+
+    factory SubItem2.fromRawJson(String str) => SubItem2.fromJson(json.decode(str));
+
+    String toRawJson() => json.encode(toJson());
+
+    factory SubItem2.fromJson(Map<String, dynamic> json) => SubItem2(
+        y: json['y'],
+        z: json['z'],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "y": y,
+        "z": z,
     };
 }
 
@@ -167,5 +236,4 @@ class Second extends SuperSecond {
         "duplicateModel": ccc.toJson(),
     };
 }
-
 ```

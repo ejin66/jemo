@@ -8,10 +8,14 @@
   "b": false,
   //alias: ccc, nullable: false, class: SubC
   "c": {
+    "i": {
+      "k": "123",
+      "n": "111"
+    },
     "d": 2,
     "e": "eee"
   },
-  //alias: fff, nullable: false, class: SubF
+  //alias: fff, nullable: false
   "f": [
     {
       "g": 22,
@@ -19,7 +23,16 @@
     }
   ],
   "j": [
-    "1"
+    [
+      "1"
+    ]
+  ],
+  "x": [
+    //class: YZ
+    {
+      "y": 1,
+      "z": false
+    }
   ]
 }
 
