@@ -8,20 +8,18 @@ import 'XXX456';
 import 'XXX123';
 
 class First extends SuperFirst {
-    double aaa;
+    double? aaa;
     bool b;
     SubC ccc;
-    List<SubItem1> fff;
-    List<List<String>> j;
-    List<SubItem2> x;
+    List<SubItem1>? fff;
+    List<YZ> x;
 
     First({
         this.aaa,
-        this.b,
-        this.ccc,
+        required this.b,
+        required this.ccc,
         this.fff,
-        this.j,
-        this.x,
+        required this.x,
     });
 
     factory First.fromRawJson(String str) => First.fromJson(json.decode(str));
@@ -29,33 +27,31 @@ class First extends SuperFirst {
     String toRawJson() => json.encode(toJson());
 
     factory First.fromJson(Map<String, dynamic> json) => First(
-        aaa: json['a'],
+        aaa: json['a']?.toDouble(),
         b: json['b'],
         ccc: SubC.fromJson(json['c']),
-        fff: List<SubItem1>.from(json['f'].map((e) => e)),
-        j: List<List<String>>.from(json['j'].map((e) => e)),
-        x: List<SubItem2>.from(json['x'].map((e) => e)),
+        fff: json['f'] != null ? List<SubItem1>.from(json['f'].map((e) => SubItem1.fromJson(e))) : null,
+        x: List<YZ>.from(json['x'].map((e) => YZ.fromJson(e))),
     );
 
     Map<String, dynamic> toJson() => {
         "a": aaa,
         "b": b,
         "c": ccc.toJson(),
-        "f": List<dynamic>.from(fff.map((e) => e)),
-        "j": List<dynamic>.from(j.map((e) => e)),
-        "x": List<dynamic>.from(x.map((e) => e)),
+        "f": fff != null ? List<dynamic>.from(fff!.map((e) => e.toJson())) : null,
+        "x": List<dynamic>.from(x.map((e) => e.toJson())),
     };
 }
 
 class SubC {
-    I i;
+    Inc? inc;
     int d;
     String e;
 
     SubC({
-        this.i,
-        this.d,
-        this.e,
+        this.inc,
+        required this.d,
+        required this.e,
     });
 
     factory SubC.fromRawJson(String str) => SubC.fromJson(json.decode(str));
@@ -63,32 +59,32 @@ class SubC {
     String toRawJson() => json.encode(toJson());
 
     factory SubC.fromJson(Map<String, dynamic> json) => SubC(
-        i: I.fromJson(json['i']),
+        inc: json['i'] != null ? Inc.fromJson(json['i']) : null,
         d: json['d'],
         e: json['e'],
     );
 
     Map<String, dynamic> toJson() => {
-        "i": i.toJson(),
+        "i": inc?.toJson(),
         "d": d,
         "e": e,
     };
 }
 
-class I {
+class Inc {
     String k;
     String n;
 
-    I({
-        this.k,
-        this.n,
+    Inc({
+        required this.k,
+        required this.n,
     });
 
-    factory I.fromRawJson(String str) => I.fromJson(json.decode(str));
+    factory Inc.fromRawJson(String str) => Inc.fromJson(json.decode(str));
 
     String toRawJson() => json.encode(toJson());
 
-    factory I.fromJson(Map<String, dynamic> json) => I(
+    factory Inc.fromJson(Map<String, dynamic> json) => Inc(
         k: json['k'],
         n: json['n'],
     );
@@ -104,8 +100,8 @@ class SubItem1 {
     int h;
 
     SubItem1({
-        this.g,
-        this.h,
+        required this.g,
+        required this.h,
     });
 
     factory SubItem1.fromRawJson(String str) => SubItem1.fromJson(json.decode(str));
@@ -123,20 +119,20 @@ class SubItem1 {
     };
 }
 
-class SubItem2 {
+class YZ {
     int y;
     bool z;
 
-    SubItem2({
-        this.y,
-        this.z,
+    YZ({
+        required this.y,
+        required this.z,
     });
 
-    factory SubItem2.fromRawJson(String str) => SubItem2.fromJson(json.decode(str));
+    factory YZ.fromRawJson(String str) => YZ.fromJson(json.decode(str));
 
     String toRawJson() => json.encode(toJson());
 
-    factory SubItem2.fromJson(Map<String, dynamic> json) => SubItem2(
+    factory YZ.fromJson(Map<String, dynamic> json) => YZ(
         y: json['y'],
         z: json['z'],
     );
@@ -153,9 +149,9 @@ class Second extends SuperSecond {
     SubC ccc;
 
     Second({
-        this.username,
-        this.password,
-        this.ccc,
+        required this.username,
+        required this.password,
+        required this.ccc,
     });
 
     factory Second.fromRawJson(String str) => Second.fromJson(json.decode(str));

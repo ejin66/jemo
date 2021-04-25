@@ -3,11 +3,12 @@
 
 //class: First, super: SuperFirst
 {
-  //alias: aaa, nullable: false
+  //alias: aaa, nullable: true
   "a": 1.2,
   "b": false,
   //alias: ccc, nullable: false, class: SubC
   "c": {
+    //class Inc, alias: inc, nullable: true
     "i": {
       "k": "123",
       "n": "111"
@@ -15,17 +16,12 @@
     "d": 2,
     "e": "eee"
   },
-  //alias: fff, nullable: false
+  //alias: fff, nullable: true
   "f": [
     {
       "g": 22,
       "h": 33
     }
-  ],
-  "j": [
-    [
-      "1"
-    ]
   ],
   "x": [
     //class: YZ

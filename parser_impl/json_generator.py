@@ -86,11 +86,16 @@ def nodeToClass(node: Node) -> str:
 def nodeToClsArg(node: Node) -> str:
     if isinstance(node, DataLeafNode):
         name = nodeName(node)
-        return nodeToClass(node) + " " + name + ";"
+        cls = nodeToClass(node)
+        if node.nullable:
+            cls += "?"
+        return cls + " " + name + ";"
 
     if isinstance(node, DataObjectNode):
         name = nodeName(node)
         cls = nodeToClass(node)
+        if node.nullable:
+            cls += "?"
         return cls + " " + name + ";"
 
     raise AttributeError("node to class arguments failed, at line: " + node.source)
@@ -115,7 +120,8 @@ def nodeToFromJson(node: Node) -> str:
             return text
 
         if node.type == ValueType.Array:
-            text = "{}.from({}.map((e) => e))".format(nodeToClass(node), json)
+
+            text = "{}.from({}.map((e) => {}.fromJson(e)))".format(nodeToClass(node), json, nodeToClass(node.children[0]))
             if node.nullable:
                 text = "{} != null ? {} : null".format(json, text)
             text = "{}: {},".format(nodeName(node), text)
@@ -135,7 +141,7 @@ def nodeToToJson(node: Node) -> str:
             return text
 
         if node.type == ValueType.Array:
-            text = "List<dynamic>.from({}.map((e) => e))".format(nodeName(node))
+            text = "List<dynamic>.from({}{}.map((e) => e.toJson()))".format(nodeName(node), "!" if node.nullable else "")
             if node.nullable:
                 text = "{} != null ? {} : null".format(nodeName(node), text)
             text = r'"{}": {},'.format(node.name, text)
@@ -179,6 +185,15 @@ class JsonGenerator(IGenerator):
 
         return importLibraries
 
+    def _nodeRequired(self, node: Node) -> str:
+        if isinstance(node, DataLeafNode) and not node.nullable:
+            return 'required '
+
+        if isinstance(node, DataObjectNode) and not node.nullable:
+            return 'required '
+
+        return ''
+
     def _generateNode(self, node: Node) -> str:
         if not isinstance(node, MutiNode):
             return ''
@@ -200,7 +215,7 @@ class JsonGenerator(IGenerator):
 
         for child in node.children:
             clsArgs += space + nodeToClsArg(child) + self._lineFeed
-            clsConstructionArgs += "{}{}this.{},{}".format(space, space, nodeName(child), self._lineFeed)
+            clsConstructionArgs += "{}{}this.{},{}".format(space + space, self._nodeRequired(child), nodeName(child), self._lineFeed)
             fromJson += "{}{}{}{}".format(space, space, nodeToFromJson(child), self._lineFeed)
             toJson += "{}{}{}{}".format(space, space, nodeToToJson(child), self._lineFeed)
 
