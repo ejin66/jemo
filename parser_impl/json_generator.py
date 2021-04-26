@@ -4,6 +4,8 @@ from igenerator import IGenerator
 from model import Node, RootNode, MutiNode, ValueType, DataLeafNode, DataObjectNode, ImportNode
 from parser_impl.json_template import jsonTemplate
 
+import re
+
 
 _clsNumber = 0
 
@@ -28,10 +30,13 @@ def formatName(name: str):
     if name == '':
         return name
 
+    name = re.sub("[^a-zA-Z0-9_]", "", name)
+
     formatName = ''
     items = name.split("_")
     for item in items:
-        formatName += item[0].lower() + item[1:]
+        formatName += item[0].upper() + item[1:]
+    formatName = formatName[0].lower() + formatName[1:]
     return formatName
 
 
@@ -101,6 +106,40 @@ def nodeToClsArg(node: Node) -> str:
     raise AttributeError("node to class arguments failed, at line: " + node.source)
 
 
+def mapToTypeList(nodeArray: DataObjectNode) -> str:
+    node = nodeArray.children[0]
+    if node.type == ValueType.Double:
+        return "e.toDouble()"
+
+    if node.type == ValueType.Int:
+        return "e"
+
+    if node.type == ValueType.String:
+        return "e"
+
+    if node.type == ValueType.Bool:
+        return "e"
+
+    return nodeToClass(node) + ".fromJson(e)"
+
+
+def typeListToMap(nodeArray: DataObjectNode) -> str:
+    node = nodeArray.children[0]
+    if node.type == ValueType.Double:
+        return "e"
+
+    if node.type == ValueType.Int:
+        return "e"
+
+    if node.type == ValueType.String:
+        return "e"
+
+    if node.type == ValueType.Bool:
+        return "e"
+
+    return "e.toJson()"
+
+
 def nodeToFromJson(node: Node) -> str:
     if isinstance(node, DataLeafNode):
         text = "{}: json['{}']".format(nodeName(node), node.name)
@@ -120,8 +159,7 @@ def nodeToFromJson(node: Node) -> str:
             return text
 
         if node.type == ValueType.Array:
-
-            text = "{}.from({}.map((e) => {}.fromJson(e)))".format(nodeToClass(node), json, nodeToClass(node.children[0]))
+            text = "{}.from({}.map((e) => {}))".format(nodeToClass(node), json, mapToTypeList(node))
             if node.nullable:
                 text = "{} != null ? {} : null".format(json, text)
             text = "{}: {},".format(nodeName(node), text)
@@ -141,7 +179,7 @@ def nodeToToJson(node: Node) -> str:
             return text
 
         if node.type == ValueType.Array:
-            text = "List<dynamic>.from({}{}.map((e) => e.toJson()))".format(nodeName(node), "!" if node.nullable else "")
+            text = "List<dynamic>.from({}{}.map((e) => {}))".format(nodeName(node), "!" if node.nullable else "", typeListToMap(node))
             if node.nullable:
                 text = "{} != null ? {} : null".format(nodeName(node), text)
             text = r'"{}": {},'.format(node.name, text)
@@ -209,7 +247,7 @@ class JsonGenerator(IGenerator):
         clsConstructionArgs = ''
         fromJson = ''
         toJson = ''
-        superCls = "extends " + node.super + " " if isinstance(node, RootNode) else ""
+        superCls = "extends " + node.super + " " if isinstance(node, RootNode) and node.super != "" else ""
 
         subNodes: List[DataObjectNode] = []
 

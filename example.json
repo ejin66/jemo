@@ -32,14 +32,17 @@
   ]
 }
 
-//class: Second, super: SuperSecond
+//class: Second
 {
   //alias: username, nullable: false
   "user_name": "",
-  "password": "",
-  //alias: ccc, nullable: false, class: SubC
-  "duplicateModel": {
+  "pass-word": "",
+  //nullable: false, class: SubC
+  "duplicate_model": {
     "d": 2,
     "e": "eee"
-  }
+  },
+  "abc": [
+    1
+  ]
 }

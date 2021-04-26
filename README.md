@@ -38,16 +38,19 @@
   ]
 }
 
-//class: Second, super: SuperSecond
+//class: Second
 {
   //alias: username, nullable: false
   "user_name": "",
-  "password": "",
-  //alias: ccc, nullable: false, class: SubC
-  "duplicateModel": {
+  "pass-word": "",
+  //nullable: false, class: SubC
+  "duplicate_model": {
     "d": 2,
     "e": "eee"
-  }
+  },
+  "abc": [
+    1
+  ]
 }
 ```
 执行命令：
@@ -201,15 +204,17 @@ class YZ {
     };
 }
 
-class Second extends SuperSecond {
+class Second {
     String username;
     String password;
-    SubC ccc;
+    SubC duplicateModel;
+    List<int> abc;
 
     Second({
         required this.username,
         required this.password,
-        required this.ccc,
+        required this.duplicateModel,
+        required this.abc,
     });
 
     factory Second.fromRawJson(String str) => Second.fromJson(json.decode(str));
@@ -218,15 +223,16 @@ class Second extends SuperSecond {
 
     factory Second.fromJson(Map<String, dynamic> json) => Second(
         username: json['user_name'],
-        password: json['password'],
-        ccc: SubC.fromJson(json['duplicateModel']),
+        password: json['pass-word'],
+        duplicateModel: SubC.fromJson(json['duplicate_model']),
+        abc: List<int>.from(json['abc'].map((e) => e)),
     );
 
     Map<String, dynamic> toJson() => {
         "user_name": username,
-        "password": password,
-        "duplicateModel": ccc.toJson(),
+        "pass-word": password,
+        "duplicate_model": duplicateModel.toJson(),
+        "abc": List<dynamic>.from(abc.map((e) => e)),
     };
 }
-
 ```
