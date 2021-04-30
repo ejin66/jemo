@@ -70,17 +70,17 @@ import 'XXX123';
 
 class First extends SuperFirst {
     double? aaa;
-    bool b;
+    bool? b;
     SubC ccc;
     List<SubItem1>? fff;
-    List<YZ> x;
+    List<YZ>? x;
 
     First({
         this.aaa,
-        required this.b,
+        this.b,
         required this.ccc,
         this.fff,
-        required this.x,
+        this.x,
     });
 
     factory First.fromRawJson(String str) => First.fromJson(json.decode(str));
@@ -92,7 +92,7 @@ class First extends SuperFirst {
         b: json['b'],
         ccc: SubC.fromJson(json['c']),
         fff: json['f'] != null ? List<SubItem1>.from(json['f'].map((e) => SubItem1.fromJson(e))) : null,
-        x: List<YZ>.from(json['x'].map((e) => YZ.fromJson(e))),
+        x: json['x'] != null ? List<YZ>.from(json['x'].map((e) => YZ.fromJson(e))) : null,
     );
 
     Map<String, dynamic> toJson() => {
@@ -100,19 +100,19 @@ class First extends SuperFirst {
         "b": b,
         "c": ccc.toJson(),
         "f": fff != null ? List<dynamic>.from(fff!.map((e) => e.toJson())) : null,
-        "x": List<dynamic>.from(x.map((e) => e.toJson())),
+        "x": x != null ? List<dynamic>.from(x!.map((e) => e.toJson())) : null,
     };
 }
 
 class SubC {
     Inc? inc;
-    int d;
-    String e;
+    int? d;
+    String? e;
 
     SubC({
         this.inc,
-        required this.d,
-        required this.e,
+        this.d,
+        this.e,
     });
 
     factory SubC.fromRawJson(String str) => SubC.fromJson(json.decode(str));
@@ -133,12 +133,12 @@ class SubC {
 }
 
 class Inc {
-    String k;
-    String n;
+    String? k;
+    String? n;
 
     Inc({
-        required this.k,
-        required this.n,
+        this.k,
+        this.n,
     });
 
     factory Inc.fromRawJson(String str) => Inc.fromJson(json.decode(str));
@@ -157,12 +157,12 @@ class Inc {
 }
 
 class SubItem1 {
-    int g;
-    int h;
+    int? g;
+    int? h;
 
     SubItem1({
-        required this.g,
-        required this.h,
+        this.g,
+        this.h,
     });
 
     factory SubItem1.fromRawJson(String str) => SubItem1.fromJson(json.decode(str));
@@ -181,12 +181,12 @@ class SubItem1 {
 }
 
 class YZ {
-    int y;
-    bool z;
+    int? y;
+    bool? z;
 
     YZ({
-        required this.y,
-        required this.z,
+        this.y,
+        this.z,
     });
 
     factory YZ.fromRawJson(String str) => YZ.fromJson(json.decode(str));
@@ -206,15 +206,15 @@ class YZ {
 
 class Second {
     String username;
-    String password;
+    String? password;
     SubC duplicateModel;
-    List<int> abc;
+    List<int>? abc;
 
     Second({
         required this.username,
-        required this.password,
+        this.password,
         required this.duplicateModel,
-        required this.abc,
+        this.abc,
     });
 
     factory Second.fromRawJson(String str) => Second.fromJson(json.decode(str));
@@ -225,14 +225,15 @@ class Second {
         username: json['user_name'],
         password: json['pass-word'],
         duplicateModel: SubC.fromJson(json['duplicate_model']),
-        abc: List<int>.from(json['abc'].map((e) => e)),
+        abc: json['abc'] != null ? List<int>.from(json['abc'].map((e) => e)) : null,
     );
 
     Map<String, dynamic> toJson() => {
         "user_name": username,
         "pass-word": password,
         "duplicate_model": duplicateModel.toJson(),
-        "abc": List<dynamic>.from(abc.map((e) => e)),
+        "abc": abc != null ? List<dynamic>.from(abc!.map((e) => e)) : null,
     };
 }
+
 ```

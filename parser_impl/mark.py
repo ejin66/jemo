@@ -40,7 +40,7 @@ class RootMark(Mark):
 
 class LeafMark(Mark):
     alias: str = ''
-    nullable: bool = False
+    nullable: bool = True
 
     def read(self, mark: str):
         dic = _parseMark(mark)

@@ -274,20 +274,6 @@ class JsonGenerator(IGenerator):
                     continue
 
                 break
-            #
-            # if isinstance(child, DataObjectNode):
-            #     if child.type == ValueType.Array:
-            #         if len(child.children) == 0:
-            #             child.cls = "dynamic"
-            #         elif isBasicType(child.children[0]):
-            #             child.cls = nodeToClass(child.children[0])
-            #         else:
-            #             n = child.children[0]
-            #             if isinstance(n, DataObjectNode):
-            #                 n.cls = nodeToClass(child)
-            #                 subNodes.append(n)
-            #     elif child.type == ValueType.Object:
-            #         subNodes.append(child)
 
         result = jsonTemplate.format(cls, clsArgs.rstrip(),
                                      clsConstructionArgs.rstrip(), fromJson.rstrip(),

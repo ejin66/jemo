@@ -54,13 +54,13 @@ class RootNode(MutiNode):
 
 class DataLeafNode(LeafNode):
     alias = ''
-    nullable = False
+    nullable = True
 
 
 class DataObjectNode(MutiNode):
     cls = ''
     alias = ''
-    nullable = False
+    nullable = True
 
     def __init__(self, array: bool):
         self.children = []
